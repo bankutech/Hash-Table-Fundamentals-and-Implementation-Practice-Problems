@@ -1,8 +1,6 @@
 import java.util.*;
 import java.util.concurrent.*;
-
 public class DNSCacheSystem {
-    // Custom Entry class to store IP and timing info
     private static class DNSEntry {
         String ipAddress;
         long createdAt;
@@ -13,18 +11,15 @@ public class DNSCacheSystem {
             this.createdAt = System.currentTimeMillis();
             this.ttlMillis = ttlSeconds * 1000L;
         }
-
         boolean isExpired() {
             return System.currentTimeMillis() - createdAt > ttlMillis;
         }
     }
-
     private final Map<String, DNSEntry> cache = new ConcurrentHashMap<>();
     private final AtomicInteger hits = new AtomicInteger(0);
     private final AtomicInteger misses = new AtomicInteger(0);
 
     public DNSCacheSystem() {
-        // Background thread: Runs every 5 seconds to remove expired entries
         ScheduledExecutorService cleaner = Executors.newSingleThreadScheduledExecutor();
         cleaner.scheduleAtFixedRate(this::cleanupExpired, 5, 5, TimeUnit.SECONDS);
     }
@@ -37,17 +32,14 @@ public class DNSCacheSystem {
             return entry.ipAddress + " (Cache HIT)";
         }
 
-        // Handle MISS or EXPIRED
         misses.incrementAndGet();
         String ip = queryUpstreamDNS(domain);
         
-        // Simulating a 300s TTL for new entries
         cache.put(domain, new DNSEntry(ip, 300));
         return ip + " (Cache MISS/EXPIRED - Querying Upstream)";
     }
 
     private String queryUpstreamDNS(String domain) {
-        // Simulating a real DNS query (e.g., to 8.8.8.8)
         return "172.217.14." + (new Random().nextInt(254) + 1);
     }
 
@@ -64,19 +56,12 @@ public class DNSCacheSystem {
 
     public static void main(String[] args) throws InterruptedException {
         DNSCacheSystem dns = new DNSCacheSystem();
-
-        // First resolution (Miss)
         System.out.println(dns.resolve("google.com"));
-        
-        // Second resolution (Hit)
         System.out.println(dns.resolve("google.com"));
-
-        // Simulate a very short TTL for demonstration
         dns.cache.put("fast-expire.com", new DNSEntry("1.1.1.1", 1));
         System.out.println("Wait 2 seconds for expiration...");
         Thread.sleep(2000);
-        
-        System.out.println(dns.resolve("fast-expire.com")); // Should be Expired/Miss
+        System.out.println(dns.resolve("fast-expire.com"));
         dns.getCacheStats();
     }
 }
