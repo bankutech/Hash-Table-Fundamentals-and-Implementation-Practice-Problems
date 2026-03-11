@@ -3,7 +3,6 @@ import java.util.*;
 
 public class RateLimiter {
 
-    // Internal class representing a client's "Token Bucket"
     private static class TokenBucket {
         private final long maxTokens;
         private final double refillRatePerMs;
@@ -17,8 +16,6 @@ public class RateLimiter {
             this.currentTokens = limitPerHour;
             this.lastRefillTimestamp = System.currentTimeMillis();
         }
-
-        // Synchronized to ensure atomic refill and consumption
         public synchronized boolean tryConsume() {
             refill();
             if (currentTokens >= 1.0) {
@@ -50,9 +47,6 @@ public class RateLimiter {
     private final Map<String, TokenBucket> clientBuckets = new ConcurrentHashMap<>();
     private final long LIMIT = 1000;
 
-    /**
-     * Checks if a client is within their rate limit.
-     */
     public String checkRateLimit(String clientId) {
         TokenBucket bucket = clientBuckets.computeIfAbsent(clientId, k -> new TokenBucket(LIMIT));
 
