@@ -31,9 +31,7 @@ public class ParkingLotSystem {
         return Math.abs(licensePlate.hashCode()) % capacity;
     }
 
-    /**
-     * Assigns a spot using Linear Probing.
-     */
+
     public String parkVehicle(String licensePlate) {
         if (occupiedCount >= capacity) return "Error: Parking Lot Full";
 
@@ -58,9 +56,7 @@ public class ParkingLotSystem {
         return String.format("Assigned spot #%d (%d probes)", currentSpot, probes);
     }
 
-    /**
-     * Frees a spot and calculates billing.
-     */
+
     public String exitVehicle(String licensePlate) {
         int preferredSpot = hash(licensePlate);
         int currentSpot = preferredSpot;
@@ -95,13 +91,12 @@ public class ParkingLotSystem {
         System.out.println("\n--- Parking Statistics ---");
         System.out.printf("Occupancy: %.1f%%%n", occupancyRate);
         System.out.printf("Average Probes per Entry: %.2f%n", avgProbes);
-        System.out.println("--------------------------\n");
+
     }
 
     public static void main(String[] args) {
         ParkingLotSystem lot = new ParkingLotSystem(500);
 
-        // Simulate collisions by using plates that might hash similarly
         System.out.println(lot.parkVehicle("ABC-1234"));
         System.out.println(lot.parkVehicle("ABC-1235")); 
         System.out.println(lot.parkVehicle("XYZ-9999"));
