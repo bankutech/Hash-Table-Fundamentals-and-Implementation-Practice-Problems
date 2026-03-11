@@ -2,7 +2,6 @@ import java.util.*;
 
 public class AutocompleteSystem {
     
-    // Node structure for the Prefix Tree (Trie)
     class TrieNode {
         Map<Character, TrieNode> children = new HashMap<>();
         // Stores top 10 suggestions at this prefix level for O(1) retrieval
@@ -18,9 +17,6 @@ public class AutocompleteSystem {
         queryFrequency = new HashMap<>();
     }
 
-    /**
-     * Updates the frequency of a query and refreshes the Trie paths.
-     */
     public void updateFrequency(String query) {
         queryFrequency.put(query, queryFrequency.getOrDefault(query, 0) + 1);
         insertIntoTrie(query);
@@ -35,15 +31,11 @@ public class AutocompleteSystem {
         }
     }
 
-    /**
-     * Maintains the top 10 list at each node.
-     */
     private void updateNodeSuggestions(TrieNode node, String query) {
         if (!node.topSuggestions.contains(query)) {
             node.topSuggestions.add(query);
         }
-        
-        // Sort based on frequency (Descending), then alphabetically
+
         node.topSuggestions.sort((a, b) -> {
             int freqA = queryFrequency.get(a);
             int freqB = queryFrequency.get(b);
@@ -55,9 +47,6 @@ public class AutocompleteSystem {
         }
     }
 
-    /**
-     * Returns top suggestions for a prefix in O(Length of Prefix) time.
-     */
     public List<String> search(String prefix) {
         TrieNode curr = root;
         for (char c : prefix.toCharArray()) {
@@ -72,14 +61,12 @@ public class AutocompleteSystem {
     public static void main(String[] args) {
         AutocompleteSystem scanner = new AutocompleteSystem();
 
-        // Seed data
         scanner.updateFrequency("java tutorial");
         scanner.updateFrequency("java tutorial"); // Rank it higher
         scanner.updateFrequency("javascript");
         scanner.updateFrequency("java download");
         scanner.updateFrequency("java 21 features");
 
-        // Search Test
         System.out.println("Suggestions for 'jav':");
         List<String> results = scanner.search("jav");
         for (int i = 0; i < results.size(); i++) {
