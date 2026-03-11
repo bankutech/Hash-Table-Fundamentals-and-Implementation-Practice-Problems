@@ -29,10 +29,6 @@ public class FraudDetector {
         transactions.add(t);
     }
 
-    /**
-     * Classic Two-Sum variant for Fraud Detection.
-     * Finds pairs that sum to target within a 1-hour window.
-     */
     public List<String> findFraudulentPairs(double targetAmount) {
         List<String> suspiciousPairs = new ArrayList<>();
         // Maps: Complement Amount -> Transaction
@@ -81,18 +77,12 @@ public class FraudDetector {
 
     public static void main(String[] args) {
         FraudDetector detector = new FraudDetector();
-
-        // Adding Sample Data
         detector.addTransaction(new Transaction(1, 500, "Store A", "ACC-1", "10:00"));
         detector.addTransaction(new Transaction(2, 300, "Store B", "ACC-2", "10:15"));
         detector.addTransaction(new Transaction(3, 200, "Store C", "ACC-3", "10:30"));
         detector.addTransaction(new Transaction(4, 500, "Store A", "ACC-9", "10:45"));
-
-        // 1. Two-Sum check for Target $500
         System.out.println("Suspicious pairs summing to $500:");
         detector.findFraudulentPairs(500).forEach(System.out::println);
-
-        // 2. Duplicate Check
         detector.detectDuplicatePayments();
     }
 }
