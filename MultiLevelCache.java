@@ -1,14 +1,11 @@
 import java.util.*;
 
 public class MultiLevelCache {
-    
-    // Video Metadata Class
     static class Video {
         String id, title;
         Video(String id, String title) { this.id = id; this.title = title; }
     }
 
-    // LRU Cache Implementation using LinkedHashMap
     class LRUCache<K, V> extends LinkedHashMap<K, V> {
         private final int capacity;
         public LRUCache(int capacity) {
@@ -32,32 +29,25 @@ public class MultiLevelCache {
         this.l1Memory = new LRUCache<>(10000); 
         this.l2SSD = new LRUCache<>(100000);
     }
-
-    /**
-     * Retrieves video through the cache hierarchy.
-     */
     public Video getVideo(String videoId) {
         totalRequests++;
         
-        // 1. Check L1 Cache
         if (l1Memory.containsKey(videoId)) {
             l1Hits++;
             System.out.println("→ L1 Cache HIT (0.5ms)");
             return l1Memory.get(videoId);
         }
 
-        // 2. Check L2 Cache
+
         if (l2SSD.containsKey(videoId)) {
             l2Hits++;
             System.out.println("→ L1 Cache MISS (0.5ms) -> L2 Cache HIT (5ms)");
             Video v = l2SSD.get(videoId);
-            
-            // Access Pattern Promotion: Move to L1 if requested again
+      
             l1Memory.put(videoId, v); 
             return v;
         }
 
-        // 3. Check L3 (Simulated Database)
         l3Hits++;
         System.out.println("→ L1 MISS -> L2 MISS -> L3 Database HIT (150ms)");
         Video v = queryDatabase(videoId);
